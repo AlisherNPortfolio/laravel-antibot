@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace AlisherNPortfolio\LaravelAntiBot\Analyzers;
+
+use AlisherNPortfolio\LaravelAntiBot\Contracts\Analyzer;
+use AlisherNPortfolio\LaravelAntiBot\DTO\AnalyzerResult;
+use AlisherNPortfolio\LaravelAntiBot\DTO\AntiBotContext;
+
+/**
+ * Scores suspicious HTTP client signatures. Never causes a hard block by
+ * itself — it only ever contributes a signal, per the package's
+ * false-positive-averse philosophy.
+ *
+ * A User-Agent claiming Googlebot/Bingbot is handled by TrustedBotManager
+ * *before* this analyzer ever runs (verified claims never reach the risk
+ * engine at all). If such a claim reaches this analyzer, it already
+ * failed DNS verification, so it is scored as a probable spoofing
+ * attempt rather than treated as a generic suspicious client.
+ */
+final class UserAgentAnalyzer implements Analyzer
+{
+    /**
+     * @param  list<string>  $suspiciousPatterns
+     */
+    public function __construct(
+        private readonly array $suspiciousPatterns,
+        private readonly int $suspiciousScore,
+        private readonly int $missingUserAgentScore,
+        private readonly int $spoofedTrustedBotScore,
+    ) {}
+
+    public function analyze(AntiBotContext $context): AnalyzerResult
+    {
+        $userAgent = trim($context->userAgent);
+
+        if ($userAgent === '') {
+            return new AnalyzerResult('user_agent', $this->missingUserAgentScore, 'missing_user_agent');
+        }
+
+        $lowerUserAgent = strtolower($userAgent);
+
+        if (str_contains($lowerUserAgent, 'googlebot') || str_contains($lowerUserAgent, 'bingbot')) {
+            return new AnalyzerResult('user_agent', $this->spoofedTrustedBotScore, 'unverified_trusted_bot_claim');
+        }
+
+        foreach ($this->suspiciousPatterns as $pattern) {
+            if (str_contains($lowerUserAgent, strtolower($pattern))) {
+                return new AnalyzerResult('user_agent', $this->suspiciousScore, 'suspicious_user_agent', [
+                    'matched_pattern' => $pattern,
+                ]);
+            }
+        }
+
+        return AnalyzerResult::none('user_agent');
+    }
+}
