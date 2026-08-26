@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Browser proof-of-work challenge system (`ProofOfWorkChallengeProvider`) with single-use, replay-protected challenges.
   - Stateless, authenticated-encrypted verification cookie (`VerificationService`).
   - Temporary, escalating IP blocking (`BlockService`) — never permanent.
-  - Network-verified trusted crawler support for Googlebot and Bingbot via reverse+forward DNS confirmation (`TrustedBotManager`, `GoogleBotVerifier`, `BingBotVerifier`), with a pluggable `DnsResolver` abstraction.
+  - Network-verified trusted crawler support for Googlebot, Bingbot, and YandexBot via reverse+forward DNS confirmation (`TrustedBotManager`, `GoogleBotVerifier`, `BingBotVerifier`, `YandexBotVerifier`), with a pluggable `DnsResolver` abstraction.
   - `AntiBotMiddleware` and package routes (`GET /anti-bot/challenge`, `POST /anti-bot/verify`).
   - Optional database event logging (`anti_bot_events` migration), disabled by default.
   - Full configuration file (`config/antibot.php`) covering scoring, rate limits, blocking, trusted bots, and exclusions.

@@ -13,4 +13,5 @@ enum TrustedBotType: string
 {
     case GOOGLEBOT = 'googlebot';
     case BINGBOT = 'bingbot';
+    case YANDEXBOT = 'yandexbot';
 }

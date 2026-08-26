@@ -3,7 +3,7 @@
 Application-agnostic anti-bot protection for Laravel: risk-based scoring,
 sliding-window rate limiting, a browser proof-of-work challenge, temporary
 IP blocking, and **network-verified** search-engine crawler bypass
-(Googlebot, Bingbot) that never trusts a User-Agent header by itself.
+(Googlebot, Bingbot, YandexBot) that never trusts a User-Agent header by itself.
 
 Works identically for a blog, a marketplace, a public API, a documentation
 site, or anything else — the package contains no application-specific logic
@@ -60,7 +60,7 @@ Route::middleware('antibot')->group(function () {
 
 That's it. Normal traffic passes through untouched; suspicious traffic sees
 a lightweight interstitial puzzle; abusive traffic is temporarily blocked;
-verified Googlebot/Bingbot traffic always passes straight through.
+verified Googlebot/Bingbot/YandexBot traffic always passes straight through.
 
 ### Global disable
 

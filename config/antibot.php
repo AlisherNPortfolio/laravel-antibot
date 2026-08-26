@@ -8,6 +8,7 @@ use AlisherNPortfolio\LaravelAntiBot\Analyzers\RateAnalyzer;
 use AlisherNPortfolio\LaravelAntiBot\Analyzers\UserAgentAnalyzer;
 use AlisherNPortfolio\LaravelAntiBot\TrustedBots\BingBotVerifier;
 use AlisherNPortfolio\LaravelAntiBot\TrustedBots\GoogleBotVerifier;
+use AlisherNPortfolio\LaravelAntiBot\TrustedBots\YandexBotVerifier;
 
 return [
 
@@ -146,6 +147,7 @@ return [
         'providers' => [
             GoogleBotVerifier::class,
             BingBotVerifier::class,
+            YandexBotVerifier::class,
         ],
 
         'cache' => [
