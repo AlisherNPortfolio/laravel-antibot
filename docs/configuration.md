@@ -49,12 +49,26 @@ configured.
 'scoring' => [
     'suspicious_user_agent' => 20,
     'missing_user_agent' => 15,
-    'spoofed_trusted_bot_claim' => 40, // claims Googlebot/Bingbot but failed DNS verification
+    'spoofed_trusted_bot_claim' => 40, // claims a trusted crawler but failed DNS verification
     'rapid_crawling' => 30,
     'challenge_failure_1' => 20,
     'challenge_failure_2' => 30,
     'challenge_failure_3_plus' => 50,
     'successful_verification' => -30, // negative: reduces risk
+],
+```
+
+## User-Agent patterns
+
+```php
+'user_agent' => [
+    'suspicious_patterns' => ['curl', 'wget', 'python-requests', ...],
+
+    // Claimed crawler names scored as `spoofed_trusted_bot_claim` (above)
+    // instead of an ordinary unrecognized User-Agent. Keep this in sync
+    // with `trusted_bots.providers` — see "Registering additional trusted
+    // crawlers" in docs/trusted-bots.md.
+    'trusted_bot_claim_patterns' => ['googlebot', 'bingbot', 'yandexbot'],
 ],
 ```
 

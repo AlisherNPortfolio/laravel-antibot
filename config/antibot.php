@@ -90,6 +90,20 @@ return [
             'httpclient',
             'httpunit',
         ],
+
+        // Substrings (case-insensitive) identifying a claimed trusted
+        // crawler. A request reaching UserAgentAnalyzer with one of these
+        // already failed TrustedBotManager's DNS verification (verified
+        // claims never reach the risk engine at all), so it's scored as a
+        // likely spoofing attempt (`spoofed_trusted_bot_claim`) rather than
+        // a generic suspicious client. Keep this in sync with
+        // `trusted_bots.providers` above — every registered
+        // TrustedBotVerifier's claimed name belongs here too.
+        'trusted_bot_claim_patterns' => [
+            'googlebot',
+            'bingbot',
+            'yandexbot',
+        ],
     ],
 
     'crawling' => [

@@ -46,3 +46,25 @@ it('scores an unverified Googlebot/Bingbot claim higher, as a likely spoof', fun
     expect($result->score)->toBe(40)
         ->and($result->reason)->toBe('unverified_trusted_bot_claim');
 });
+
+it('scores an unverified YandexBot claim the same way, as a likely spoof', function () {
+    $result = makeUserAgentAnalyzer()->analyze(makeContext(['userAgent' => 'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)']));
+
+    expect($result->score)->toBe(40)
+        ->and($result->reason)->toBe('unverified_trusted_bot_claim');
+});
+
+it('honours a custom trusted-bot-claim pattern list', function () {
+    $analyzer = new UserAgentAnalyzer(
+        suspiciousPatterns: [],
+        suspiciousScore: 20,
+        missingUserAgentScore: 15,
+        spoofedTrustedBotScore: 40,
+        trustedBotClaimPatterns: ['duckduckbot'],
+    );
+
+    $result = $analyzer->analyze(makeContext(['userAgent' => 'DuckDuckBot/1.1']));
+
+    expect($result->score)->toBe(40)
+        ->and($result->reason)->toBe('unverified_trusted_bot_claim');
+});

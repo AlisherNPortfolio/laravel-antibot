@@ -189,6 +189,16 @@ an existing one for metadata/logging purposes), extend the enum in a fork or
 open an issue — keeping the core engine free of hard-coded search engines is
 a deliberate design choice (see `docs/architecture.md`).
 
+**Don't forget `user_agent.trusted_bot_claim_patterns`.** Every registered
+verifier's claimed name (whatever `supports()` matches on, e.g.
+`'my-crawler'` above) should also be added to
+`antibot.user_agent.trusted_bot_claim_patterns`. Without it, a *spoofed*
+claim for your new crawler (one that fails DNS verification) falls through
+`UserAgentAnalyzer` as an ordinary, unrecognized User-Agent instead of being
+scored as a likely spoofing attempt (`spoofed_trusted_bot_claim`) — a real
+gap that occurred when YandexBot support was first added and is now covered
+by a dedicated test (`UserAgentAnalyzerTest`).
+
 ## Never a general whitelist
 
 There is no mechanism, and none should be added, where a User-Agent alone

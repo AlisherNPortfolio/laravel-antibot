@@ -21,3 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Full configuration file (`config/antibot.php`) covering scoring, rate limits, blocking, trusted bots, and exclusions.
   - Extensibility points for custom analyzers, trusted bot verifiers, and challenge providers via the container.
   - Opt-in diagnostic logging for social link-preview bots (Telegram, Facebook, ...) affected by a CHALLENGE/BLOCK decision (`LinkPreviewBotDetector`, `ANTIBOT_LOG_LINK_PREVIEW_BOTS`, default off) — logs only, never bypasses.
+
+### Fixed
+
+- `UserAgentAnalyzer` only recognized `googlebot`/`bingbot` for the `spoofed_trusted_bot_claim` signal, so a spoofed `YandexBot` claim (one that failed DNS verification) fell through as an ordinary, unscored User-Agent instead of being flagged as a likely spoof. The claimed-name list is now configuration-driven (`antibot.user_agent.trusted_bot_claim_patterns`, default `['googlebot', 'bingbot', 'yandexbot']`) so it stays in sync with `trusted_bots.providers` going forward.

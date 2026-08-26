@@ -153,6 +153,7 @@ final class AntiBotServiceProvider extends ServiceProvider
             (int) config('antibot.scoring.suspicious_user_agent', 20),
             (int) config('antibot.scoring.missing_user_agent', 15),
             (int) config('antibot.scoring.spoofed_trusted_bot_claim', 40),
+            config('antibot.user_agent.trusted_bot_claim_patterns', ['googlebot', 'bingbot', 'yandexbot']),
         ));
 
         $this->app->singleton(CrawlPatternAnalyzer::class, static fn (Application $app) => new CrawlPatternAnalyzer(
