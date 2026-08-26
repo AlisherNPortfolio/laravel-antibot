@@ -167,6 +167,33 @@ return [
         ],
     ],
 
+    // Purely diagnostic, opt-in observability for known social/chat
+    // link-preview fetchers (Telegram, Facebook, Twitter/X, Slack, Discord,
+    // ...). These clients cannot run JavaScript, so if one of them is ever
+    // CHALLENGE'd or BLOCK'd, the site's link preview (title/image) breaks
+    // for that platform. This performs NO bypass and never changes a
+    // decision — enabling it only logs a distinct
+    // `antibot.link_preview_bot_affected` event so you can notice the
+    // pattern and, if appropriate, add the affected routes to
+    // `exclude.routes`/`exclude.paths` below. See docs/trusted-bots.md.
+    'link_preview_bots' => [
+        'log_when_affected' => env('ANTIBOT_LOG_LINK_PREVIEW_BOTS', false),
+
+        'patterns' => [
+            'telegrambot',
+            'facebookexternalhit',
+            'twitterbot',
+            'slackbot',
+            'discordbot',
+            'whatsapp',
+            'linkedinbot',
+            'skypeuripreview',
+            'redditbot',
+            'vkshare',
+            'pinterest',
+        ],
+    ],
+
     // Routes/route-names never subject to AntiBot at all.
     'exclude' => [
         'routes' => [],

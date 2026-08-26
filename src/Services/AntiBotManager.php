@@ -12,6 +12,7 @@ use AlisherNPortfolio\LaravelAntiBot\Enums\BotDecision;
 use AlisherNPortfolio\LaravelAntiBot\Support\DatabaseEventRecorder;
 use AlisherNPortfolio\LaravelAntiBot\Support\Exceptions\AntiBotStoreException;
 use AlisherNPortfolio\LaravelAntiBot\Support\Hashing;
+use AlisherNPortfolio\LaravelAntiBot\Support\LinkPreviewBotDetector;
 use AlisherNPortfolio\LaravelAntiBot\TrustedBots\TrustedBotManager;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -49,11 +50,17 @@ final class AntiBotManager implements AntiBotService
         private readonly bool $trustedBotsBypassBlock,
         private readonly bool $storeDatabaseEvents,
         private readonly DatabaseEventRecorder $eventRecorder,
+        private readonly bool $linkPreviewBotLoggingEnabled,
+        private readonly LinkPreviewBotDetector $linkPreviewBotDetector,
     ) {}
 
     public function inspect(AntiBotContext $context): BotDecisionResult
     {
         $result = $this->resolve($context);
+
+        if ($result->decision !== BotDecision::ALLOW) {
+            $this->logLinkPreviewBotIfAffected($context, $result);
+        }
 
         if ($this->storeDatabaseEvents) {
             $this->eventRecorder->record($context, $result->decision->value, $result->score, $result->reason);
@@ -166,5 +173,34 @@ final class AntiBotManager implements AntiBotService
             'ip_hash' => Hashing::shortHash($context->ip),
             'path' => $context->path,
         ], $extra));
+    }
+
+    /**
+     * Diagnostic only: a known social/chat link-preview fetcher (Telegram,
+     * Facebook, ...) cannot run JavaScript, so a CHALLENGE/BLOCK decision
+     * against it breaks that platform's link preview. Never influences the
+     * decision itself — see LinkPreviewBotDetector and
+     * `antibot.link_preview_bots` config.
+     */
+    private function logLinkPreviewBotIfAffected(AntiBotContext $context, BotDecisionResult $result): void
+    {
+        if (! $this->linkPreviewBotLoggingEnabled) {
+            return;
+        }
+
+        $matchedPattern = $this->linkPreviewBotDetector->matches($context->userAgent);
+
+        if ($matchedPattern === null) {
+            return;
+        }
+
+        Log::warning('antibot.link_preview_bot_affected', [
+            'ip_hash' => Hashing::shortHash($context->ip),
+            'path' => $context->path,
+            'decision' => $result->decision->value,
+            'score' => $result->score,
+            'reason' => $result->reason,
+            'matched_pattern' => $matchedPattern,
+        ]);
     }
 }

@@ -95,6 +95,15 @@ Every threshold, score, window, and duration is configurable —
 procedure, its documented limitations, caching, failure behavior, and how
 to register your own trusted-crawler verifier.
 
+## Social link-preview bots (Telegram, Facebook, ...)
+
+Telegram/Slack/Discord/etc. link-preview fetchers can't run JavaScript and
+aren't network-verifiable the way Google/Bing/Yandex are, so they're never
+auto-trusted — but under load they can get `CHALLENGE`d/`BLOCK`ed too,
+breaking the preview. Set `ANTIBOT_LOG_LINK_PREVIEW_BOTS=true` to log a
+diagnostic event when this happens (no bypass, decision unchanged) — see
+["Social link-preview bots"](docs/trusted-bots.md#social-link-preview-bots-telegram-facebook-) in docs/trusted-bots.md.
+
 ## Extensibility
 
 - Custom risk analyzers — [docs/custom-analyzers.md](docs/custom-analyzers.md)

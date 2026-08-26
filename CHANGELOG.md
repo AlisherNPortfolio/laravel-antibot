@@ -20,3 +20,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Optional database event logging (`anti_bot_events` migration), disabled by default.
   - Full configuration file (`config/antibot.php`) covering scoring, rate limits, blocking, trusted bots, and exclusions.
   - Extensibility points for custom analyzers, trusted bot verifiers, and challenge providers via the container.
+  - Opt-in diagnostic logging for social link-preview bots (Telegram, Facebook, ...) affected by a CHALLENGE/BLOCK decision (`LinkPreviewBotDetector`, `ANTIBOT_LOG_LINK_PREVIEW_BOTS`, default off) — logs only, never bypasses.

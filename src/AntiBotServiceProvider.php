@@ -27,6 +27,7 @@ use AlisherNPortfolio\LaravelAntiBot\Stores\RedisChallengeStore;
 use AlisherNPortfolio\LaravelAntiBot\Stores\RedisRateLimitStore;
 use AlisherNPortfolio\LaravelAntiBot\Support\AntiBotContextFactory;
 use AlisherNPortfolio\LaravelAntiBot\Support\DatabaseEventRecorder;
+use AlisherNPortfolio\LaravelAntiBot\Support\LinkPreviewBotDetector;
 use AlisherNPortfolio\LaravelAntiBot\Support\SystemDnsResolver;
 use AlisherNPortfolio\LaravelAntiBot\TrustedBots\TrustedBotManager;
 use Illuminate\Contracts\Foundation\Application;
@@ -221,6 +222,10 @@ final class AntiBotServiceProvider extends ServiceProvider
 
         $this->app->singleton(DatabaseEventRecorder::class);
 
+        $this->app->singleton(LinkPreviewBotDetector::class, static fn (Application $app) => new LinkPreviewBotDetector(
+            config('antibot.link_preview_bots.patterns', []),
+        ));
+
         $this->app->singleton(AntiBotContextFactory::class, static fn (Application $app) => new AntiBotContextFactory(
             config('antibot.verification.cookie_name', 'antibot_verified'),
         ));
@@ -239,6 +244,8 @@ final class AntiBotServiceProvider extends ServiceProvider
             trustedBotsBypassBlock: (bool) config('antibot.trusted_bots.bypass_block', true),
             storeDatabaseEvents: (bool) config('antibot.logging.store_database_events', false),
             eventRecorder: $app->make(DatabaseEventRecorder::class),
+            linkPreviewBotLoggingEnabled: (bool) config('antibot.link_preview_bots.log_when_affected', false),
+            linkPreviewBotDetector: $app->make(LinkPreviewBotDetector::class),
         ));
     }
 }
