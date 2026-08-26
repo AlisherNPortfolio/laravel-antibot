@@ -121,7 +121,15 @@ final class ArrayRedisConnection
         return $this->record($isNew ? 1 : 0);
     }
 
-    public function zremrangebyscore(string $key, string|float $min, string|float $max): int
+    /**
+     * `string $min`/`string $max` deliberately mirrors the real phpredis
+     * extension's arginfo (it types these `string` to allow the
+     * "-inf"/"+inf"/"(exclusive" range syntax) rather than accepting a
+     * looser `string|float` union — under `strict_types`, passing a raw
+     * float here is a real TypeError against real Redis that this fake
+     * would otherwise silently tolerate.
+     */
+    public function zremrangebyscore(string $key, string $min, string $max): int
     {
         /** @var array<string, float> $zset */
         $zset = $this->store[$key]['value'] ?? [];

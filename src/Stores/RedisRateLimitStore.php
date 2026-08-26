@@ -30,7 +30,11 @@ final class RedisRateLimitStore implements RateLimiter
             $redisKey = $this->key("rate:{$key}:{$windowSeconds}");
             $now = microtime(true);
             $member = $now.'-'.bin2hex(random_bytes(4));
-            $cutoff = $now - $windowSeconds;
+            // ZREMRANGEBYSCORE's range arguments are typed `string` by the
+            // phpredis extension (to allow the "-inf"/"+inf"/"(exclusive"
+            // score syntax) — under strict_types, passing the raw float
+            // here throws a TypeError instead of being silently coerced.
+            $cutoff = (string) ($now - $windowSeconds);
 
             $results = $redis->transaction(function ($tx) use ($redisKey, $now, $member, $cutoff, $windowSeconds) {
                 $tx->zadd($redisKey, $now, $member);
