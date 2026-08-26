@@ -63,7 +63,7 @@ final class AntiBotManager implements AntiBotService
         }
 
         if ($this->storeDatabaseEvents) {
-            $this->eventRecorder->record($context, $result->decision->value, $result->score, $result->reason);
+            $this->eventRecorder->record($context, $result->decision->value, $result->score, $result->reason, $result->metadata);
         }
 
         return $result;

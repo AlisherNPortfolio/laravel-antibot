@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-08-26
+
+### Fixed
+
+- `AntiBotManager::inspect()` recorded a database event (when `antibot.logging.store_database_events` is enabled) without ever passing `$result->metadata`, so the `anti_bot_events.metadata` column was always empty — the per-analyzer detail (e.g. which rate-limit window was exceeded, a verified trusted-bot's type) that `RiskScoreEngine`/`TrustedBotManager` already compute was silently discarded instead of being persisted.
+
 ## [1.0.1] - 2026-08-26
 
 ### Fixed
