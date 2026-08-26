@@ -164,7 +164,7 @@ explanation. Diagnostic only — never changes a decision.
 ```php
 'logging' => [
     'enabled' => true,
-    'store_database_events' => false, // optional; requires the published migration
+    'store_database_events' => env('ANTIBOT_STORE_DATABASE_EVENTS', false), // optional; requires the published migration
 ],
 ```
 

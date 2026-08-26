@@ -218,7 +218,7 @@ return [
         'enabled' => true,
         // Optional: also persist a row per decision to the anti_bot_events
         // table (see database/migrations). Never required for core operation.
-        'store_database_events' => false,
+        'store_database_events' => env('ANTIBOT_STORE_DATABASE_EVENTS', false),
     ],
 
     'redis' => [
