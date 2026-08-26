@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- CI: the `test` matrix's PHP 8.2/8.3/8.4 × Laravel 11.* jobs were all failing dependency resolution — Composer's install-time security-advisory audit excludes any package version affected by a known advisory from the solver entirely, and every currently-released `laravel/framework` 11.x version (up to v11.56.1) has at least one open advisory. `audit.block-insecure` is now disabled for this CI-only compatibility matrix (`.github/workflows/tests.yml`); confirmed the package's own test suite passes unmodified against Laravel 11.56.1 once dependency resolution succeeds.
+- CI: Laravel 13.* was removed from the test matrix — `pestphp/pest-plugin-laravel` (a dev/test-only dependency) has no released version yet that supports Laravel 13, so no combination could resolve. This is a test-tooling gap, not a known incompatibility in this package's own code; `13.*` will be re-added to the matrix once pest-plugin-laravel supports it.
+
 ## [1.0.0] - 2026-08-26
 
 ### Added

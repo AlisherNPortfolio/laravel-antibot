@@ -42,7 +42,9 @@ php artisan migrate
 ## Requirements
 
 - PHP 8.2+
-- Laravel 11, 12, or 13
+- Laravel 11, 12, or 13 (CI currently covers 11 and 12; 13 is allowed by
+  `composer.json` but not yet CI-tested — `pestphp/pest-plugin-laravel` has
+  no released version supporting Laravel 13 yet)
 - Redis (via `illuminate/redis`, phpredis or Predis) — required for the
   core protection pipeline; see [docs/redis.md](docs/redis.md)
 
