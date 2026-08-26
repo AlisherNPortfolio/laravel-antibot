@@ -1,6 +1,6 @@
 {
     "name": "alishernportfolio/laravel-antibot",
-    "description": "Application-agnostic anti-bot protection for Laravel: risk-based scoring, sliding-window rate limiting, proof-of-work challenges, temporary blocking, and network-verified search engine crawler bypass (Googlebot, Bingbot).",
+    "description": "Application-agnostic anti-bot protection for Laravel: risk-based scoring, sliding-window rate limiting, proof-of-work challenges, temporary blocking, and network-verified search engine crawler bypass (Googlebot, Bingbot, YandexBot).",
     "keywords": [
         "laravel",
         "antibot",
@@ -11,6 +11,7 @@
         "proof-of-work",
         "googlebot",
         "bingbot",
+        "yandexbot",
         "scraping"
     ],
     "license": "MIT",
