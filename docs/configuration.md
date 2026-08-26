@@ -165,6 +165,9 @@ explanation. Diagnostic only — never changes a decision.
 'logging' => [
     'enabled' => true,
     'store_database_events' => env('ANTIBOT_STORE_DATABASE_EVENTS', false), // optional; requires the published migration
+    // Rows older than this are deleted by the `antibot:prune-events` command
+    // (auto-scheduled daily). 0 disables pruning — see docs/privacy.md.
+    'retention_days' => env('ANTIBOT_LOG_RETENTION_DAYS', 30),
 ],
 ```
 

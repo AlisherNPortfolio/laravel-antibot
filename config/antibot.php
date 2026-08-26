@@ -219,6 +219,13 @@ return [
         // Optional: also persist a row per decision to the anti_bot_events
         // table (see database/migrations). Never required for core operation.
         'store_database_events' => env('ANTIBOT_STORE_DATABASE_EVENTS', false),
+
+        // How many days a stored anti_bot_events row is kept before the
+        // `antibot:prune-events` command (auto-scheduled daily via the host
+        // app's own scheduler — requires `schedule:run` in cron, same as
+        // any Laravel app) deletes it. 0 (or any value <= 0) disables
+        // pruning entirely: rows are kept forever unless you prune manually.
+        'retention_days' => env('ANTIBOT_LOG_RETENTION_DAYS', 30),
     ],
 
     'redis' => [

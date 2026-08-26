@@ -49,6 +49,18 @@ id, ip_hash, session_hash, path, method, user_agent_hash,
 score, decision, reason, metadata, created_at
 ```
 
+### Retention
+
+Rows are **not** deleted automatically by writing them — nothing in this
+table has a TTL. `antibot.logging.retention_days` (default `30`;
+`ANTIBOT_LOG_RETENTION_DAYS`) controls how long they're kept: the
+`antibot:prune-events` Artisan command, auto-scheduled daily via the host
+app's own scheduler, deletes rows older than that. Setting it to `0`
+disables pruning — rows are then kept forever until pruned manually. Note
+this requires your application's scheduler to actually be running (the
+standard `* * * * * php artisan schedule:run` cron entry), same as any
+other scheduled task in a Laravel app.
+
 ## What is never logged
 
 Regardless of the `logging.enabled` setting, this package never logs:

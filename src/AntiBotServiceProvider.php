@@ -8,6 +8,7 @@ use AlisherNPortfolio\LaravelAntiBot\Analyzers\ChallengeAnalyzer;
 use AlisherNPortfolio\LaravelAntiBot\Analyzers\CrawlPatternAnalyzer;
 use AlisherNPortfolio\LaravelAntiBot\Analyzers\RateAnalyzer;
 use AlisherNPortfolio\LaravelAntiBot\Analyzers\UserAgentAnalyzer;
+use AlisherNPortfolio\LaravelAntiBot\Console\Commands\PruneAntiBotEventsCommand;
 use AlisherNPortfolio\LaravelAntiBot\Contracts\AntiBotService;
 use AlisherNPortfolio\LaravelAntiBot\Contracts\BlockStore;
 use AlisherNPortfolio\LaravelAntiBot\Contracts\ChallengeProvider;
@@ -30,6 +31,7 @@ use AlisherNPortfolio\LaravelAntiBot\Support\DatabaseEventRecorder;
 use AlisherNPortfolio\LaravelAntiBot\Support\LinkPreviewBotDetector;
 use AlisherNPortfolio\LaravelAntiBot\Support\SystemDnsResolver;
 use AlisherNPortfolio\LaravelAntiBot\TrustedBots\TrustedBotManager;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
@@ -75,7 +77,33 @@ final class AntiBotServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../resources/views/antibot' => $this->app->resourcePath('views/vendor/antibot'),
             ], 'antibot-views');
+
+            $this->commands([PruneAntiBotEventsCommand::class]);
         }
+
+        $this->scheduleEventPruning();
+    }
+
+    /**
+     * Auto-registers a daily run of `antibot:prune-events` on the host
+     * app's own scheduler — no Kernel edit required, mirroring how the
+     * middleware alias and routes are wired without manual config. Safe
+     * to register unconditionally: the command itself no-ops when
+     * `retention_days` is disabled or the table doesn't exist, and this
+     * only queues an in-memory Schedule entry — it still needs the host's
+     * own `* * * * * php artisan schedule:run` cron entry to actually fire,
+     * same as any Laravel app.
+     */
+    private function scheduleEventPruning(): void
+    {
+        if (! $this->app->bound(Schedule::class)) {
+            return;
+        }
+
+        $this->app->make(Schedule::class)
+            ->command(PruneAntiBotEventsCommand::class)
+            ->daily()
+            ->name('antibot:prune-events');
     }
 
     protected function registerRoutes(): void

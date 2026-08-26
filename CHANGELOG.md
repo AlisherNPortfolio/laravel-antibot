@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-08-26
+
+### Added
+
+- `anti_bot_events` rows now have a retention policy: `antibot.logging.retention_days` (`ANTIBOT_LOG_RETENTION_DAYS`, default `30`; `0` disables pruning) controls how long rows are kept. A new `antibot:prune-events` Artisan command deletes expired rows and is auto-scheduled daily via the host application's own scheduler — no manual `Kernel`/`routes/console.php` edit needed, though it still requires the host's `schedule:run` cron entry to actually fire. The command safely no-ops (rather than erroring) when the table hasn't been migrated or pruning is disabled. Previously, rows accumulated forever with no way to expire them — see docs/privacy.md.
+
 ## [1.1.0] - 2026-08-26
 
 ### Added
